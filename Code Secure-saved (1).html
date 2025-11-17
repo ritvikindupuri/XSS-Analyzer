@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Analysis Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#003e69',
+                        'primary-light': '#f8f9ff',
+                        'secondary-dark': '#303c4c',
+                        'secondary-light': '#e9f1ff',
+                        'background-color': '#d6e4f7',
+                        'error-color': '#de3730',
+                        'neutral-dark': '#3a3b3e',
+                        'neutral-light': '#f9f9fc',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #d6e4f7; /* background color */
+            color: #3a3b3e; /* neutral-dark */
+        }
+        h1, h2, h3, h4 {
+            color: #003e69; /* primary-dark */
+        }
+        .card {
+            background-color: #f8f9ff; /* primary-light */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .code-block {
+            background-color: #303c4c; /* secondary-dark */
+            color: #f8f9ff; /* primary-light */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .section-title {
+            color: #003e69; /* primary-dark */
+            border-bottom: 2px solid #e9f1ff; /* secondary-light */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .vulnerability-item {
+            border-left: 4px solid #003e69; /* primary-dark */
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .recommendation-item {
+            border-left: 4px solid #e9f1ff; /* secondary-light */
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .recommendation-item h4 {
+            color: #003e69; /* primary-dark */
+        }
+        .error-text {
+            color: #de3730; /* error-color */
+        }
+        .chart-container {
+            position: relative;
+            height: 250px; /* Adjust height as needed */
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-bold mb-2">Security Analysis Report</h1>
+            <p class="text-lg text-neutral-dark"><strong>Project:</strong> Node.js HTTP Server</p>
+            <p class="text-lg text-neutral-dark"><strong>Date:</strong> November 16, 2025</p>
+        </header>
+
+        <section class="mb-8 card p-6">
+            <h2 class="section-title text-3xl font-semibold mb-4">Vulnerability Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center p-4 rounded-lg" style="background-color: #f8f9ff;">
+                    <p class="text-lg font-medium">Critical</p>
+                    <p class="text-5xl font-bold text-error-color">0</p>
+                    <p class="text-sm text-neutral-dark">Vulnerabilities</p>
+                </div>
+                <div class="text-center p-4 rounded-lg" style="background-color: #f8f9ff;">
+                    <p class="text-lg font-medium">Medium</p>
+                    <p class="text-5xl font-bold text-primary-dark">1</p>
+                    <p class="text-sm text-neutral-dark">Vulnerabilities</p>
+                    <p class="text-xs text-neutral-dark">(Reflected XSS)</p>
+                </div>
+                <div class="text-center p-4 rounded-lg" style="background-color: #f8f9ff;">
+                    <p class="text-lg font-medium">Low</p>
+                    <p class="text-5xl font-bold text-secondary-dark">1</p>
+                    <p class="text-sm text-neutral-dark">Vulnerabilities</p>
+                    <p class="text-xs text-neutral-dark">(Legacy `url.parse()` API)</p>
+                </div>
+            </div>
+            <div class="mt-6 chart-container">
+                <canvas id="vulnerabilityPieChart"></canvas>
+            </div>
+        </section>
+
+        <section class="mb-8 card p-6">
+            <h2 class="section-title text-3xl font-semibold mb-4">Identified Advanced Application Security Vulnerabilities</h2>
+
+            <div class="vulnerability-item">
+                <h3 class="text-2xl font-semibold mb-2">1.1 Reflected Cross-Site Scripting (XSS)</h3>
+                <p class="mb-2"><strong>Vulnerability Description:</strong> The application directly embeds user-controlled input from the `name` query parameter (`req.url`) into the HTML response (`<h1>Hello, ${name}</h1>`) without any output encoding or sanitization.</p>
+                <p class="mb-2"><strong>Exploitation:</strong> An attacker can craft a malicious URL (e.g., `http://localhost:3000/?name=&lt;script&gt;alert('XSS')&lt;/script&gt;`). When a victim accesses this URL, the embedded script executes in their browser within the application's domain.</p>
+                <p class="mb-2"><strong>Impact:</strong> Potential for session hijacking, cookie theft, website defacement, redirection, and client-side arbitrary code execution. This can be chained with other vulnerabilities for privilege escalation or data exfiltration.</p>
+                <p><strong>Deep Analysis Correlation:</strong> Directly aligns with `Deep Analysis Results` sections on "Reflected Cross-Site Scripting (XSS)", "Advanced Cross-Site Scripting (XSS) payloads and bypass techniques (Reflected Context)", and "Direct String Concatenation: A Major XSS Risk".</p>
+            </div>
+
+            <div class="vulnerability-item">
+                <h3 class="text-2xl font-semibold mb-2">1.2 Use of Legacy `url.parse()` API</h3>
+                <p class="mb-2"><strong>Vulnerability Description:</strong> The code utilizes the deprecated `url.parse()` function for parsing the request URL.</p>
+                <p class="mb-2"><strong>Security Risk:</strong> While the immediate impact in this snippet is limited, relying on a legacy API is a security risk pattern. The `url.parse()` API has known vulnerabilities related to hostname spoofing and improper handling of URL components, which could be exploited in more complex scenarios.</p>
+                <p><strong>Deep Analysis Correlation:</strong> Explicitly advised against in the `Deep Analysis Results` section "URL parsing of large query parameters in Node.js", which recommends the WHATWG `URL` API as a more secure alternative.</p>
+            </div>
+        </section>
+
+        <section class="mb-8 card p-6">
+            <h2 class="section-title text-3xl font-semibold mb-4">Common Security Patterns (Absence of)</h2>
+
+            <div class="vulnerability-item">
+                <h3 class="text-2xl font-semibold mb-2">2.1 Missing Comprehensive Output Encoding and Input Sanitization</h3>
+                <p class="mb-2"><strong>Pattern:</strong> The application lacks robust, context-aware output encoding for dynamic HTML content and explicit input validation/sanitization for query parameters.</p>
+                <p class="mb-2"><strong>Details:</strong> The current implementation assumes the `name` parameter is safe, which is an insecure design. A comprehensive approach requires validating input at the boundary and encoding output at the render point.</p>
+                <p><strong>Deep Analysis Correlation:</strong> Contravenes principles in "Context-aware HTML entity encoding in Node.js" and "Robust input validation, sanitization, and output encoding", emphasizing secure libraries and context-specific encoding.</p>
+            </div>
+
+            <div class="vulnerability-item">
+                <h3 class="text-2xl font-semibold mb-2">2.2 Absence of HTTP Security Headers</h3>
+                <p class="mb-2"><strong>Pattern:</strong> The application's HTTP response headers are minimal, lacking critical security enhancements.</p>
+                <p class="mb-2"><strong>Details:</strong> Only the `Content-Type` header is set. Missing headers include `Content-Security-Policy`, `X-Content-Type-Options`, `X-Frame-Options`, `Strict-Transport-Security`, and `Referrer-Policy`.</p>
+                <p class="mb-2"><strong>Impact:</strong> Diminishes client-side and browser-level protection against various attacks.</p>
+                <p><strong>Deep Analysis Correlation:</strong> Detailed in `Deep Analysis Results` sections on "Content Security Policy (CSP)" and "HTTP security headers", highlighting their importance in mitigating client-side injection, clickjacking, MIME type confusion, and ensuring secure transport.</p>
+            </div>
+        </section>
+
+        <section class="mb-8 card p-6">
+            <h2 class="section-title text-3xl font-semibold mb-4">Recommendations for Improving Code Security</h2>
+
+            <div class="recommendation-item">
+                <h3 class="text-2xl font-semibold mb-3">3.1 Mitigate Reflected Cross-Site Scripting (XSS)</h3>
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Recommendation 1: Implement Context-Aware Output Encoding.</h4>
+                    <p class="mb-2"><strong>Action:</strong> HTML-encode all user-controlled data or untrusted input reflected in HTML responses using a vetted library.</p>
+                    <p class="mb-2"><strong>Example (using `escape-html`):</strong></p>
+                    <pre class="code-block"><code>const http = require('http');
+const url = require('url');
+const escapeHtml = require('escape-html'); // npm install escape-html
+
+http.createServer((req, res) => {
+  const query = url.parse(req.url, true).query;
+  const name = query.name || 'Guest';
+  const escapedName = escapeHtml(name); // Apply HTML encoding
+
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(`&lt;h1&gt;Hello, ${escapedName}&lt;/h1&gt;`);
+}).listen(3000, () => {
+  console.log('Server running at http://localhost:3000/');
+});</code></pre>
+                    <p><strong>Rationale:</strong> Ensures characters like `<`, `>`, `&`, `"`, and `'` are rendered as text, preventing browser misinterpretation and script execution.</p>
+                </div>
+                <div class="mt-4">
+                    <h4 class="text-xl font-semibold mb-2">Recommendation 2: Implement Strict Input Validation and Sanitization.</h4>
+                    <p class="mb-2"><strong>Action:</strong> Validate the `name` parameter to accept only expected safe characters (e.g., alphanumeric, specific symbols). Consider libraries like `validator.js` or `joi` for larger applications.</p>
+                    <p><strong>Rationale:</strong> Input validation is the first line of defense, preventing malicious data from entering the application.</p>
+                </div>
+            </div>
+
+            <div class="recommendation-item">
+                <h3 class="text-2xl font-semibold mb-3">3.2 Migrate to WHATWG `URL` API</h3>
+                <p class="mb-2"><strong>Recommendation:</strong> Replace the deprecated `url.parse()` with the modern, more secure WHATWG `URL` API.</p>
+                <p class="mb-2"><strong>Action:</strong></p>
+                <pre class="code-block"><code>const http = require('http');
+const escapeHtml = require('escape-html');
+
+http.createServer((req, res) => {
+  let name = 'Guest';
+  try {
+    const requestUrl = new URL(req.url, `http://${req.headers.host}`); // Use WHATWG URL API
+    name = requestUrl.searchParams.get('name') || 'Guest';
+  } catch (error) {
+    console.error('Error parsing URL:', error);
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('Bad Request: Invalid URL');
+    return;
+  }
+
+  const escapedName = escapeHtml(name);
+
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(`&lt;h1&gt;Hello, ${escapedName}&lt;/h1&gt;`);
+}).listen(3000, () => {
+  console.log('Server running at http://localhost:3000/');
+});</code></pre>
+                <p><strong>Rationale:</strong> The `new URL()` constructor offers a more robust and secure parsing mechanism, mitigating potential vulnerabilities associated with `url.parse()`.</p>
+            </div>
+
+            <div class="recommendation-item">
+                <h3 class="text-2xl font-semibold mb-3">3.3 Implement HTTP Security Headers</h3>
+                <div>
+                    <h4 class="text-xl font-semibold mb-2">Recommendation 1: Implement a Restrictive Content Security Policy (CSP).</h4>
+                    <p class="mb-2"><strong>Action:</strong> Add a `Content-Security-Policy` header to all responses, starting with `default-src 'self'` and explicitly whitelisting trusted sources for scripts, styles, etc.</p>
+                    <p class="mb-2"><strong>Example:</strong></p>
+                    <pre class="code-block"><code>res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self';");</code></pre>
+                    <p><strong>Rationale:</strong> CSP is a defense-in-depth mechanism against XSS by controlling resource loading and execution.</p>
+                </div>
+                <div class="mt-4">
+                    <h4 class="text-xl font-semibold mb-2">Recommendation 2: Implement Essential HTTP Security Headers.</h4>
+                    <p class="mb-2"><strong>Action:</strong> Add the following headers to all responses. Consider using middleware like `helmet` for larger applications.</p>
+                    <p class="mb-2"><strong>Example:</strong></p>
+                    <pre class="code-block"><code>res.setHeader('X-Content-Type-Options', 'nosniff');
+res.setHeader('X-Frame-Options', 'DENY');
+res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload'); // For HTTPS only
+res.setHeader('Referrer-Policy', 'no-referrer-when-downgrade');
+res.setHeader('X-XSS-Protection', '1; mode=block'); // Backward compatibility, CSP is primary.</code></pre>
+                    <p><strong>Rationale:</strong> These headers prevent MIME type sniffing, clickjacking, enforce HTTPS, control referrer leakage, and enable browser-based XSS filtering, enhancing client-side security.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="card p-6">
+            <h2 class="section-title text-3xl font-semibold mb-4">General Security Best Practices</h2>
+            <ul class="list-disc list-inside space-y-2 text-neutral-dark">
+                <li><strong>Dependency Management:</strong> Regularly run `npm audit` and update dependencies. Commit `package-lock.json` for consistent installations.</li>
+                <li><strong>Secure Deployment:</strong> Run Node.js applications as a non-root user with minimal privileges. Use a process manager (`systemd`, `PM2`) with a "log-exit-restart" strategy for unhandled exceptions.</li>
+                <li><strong>Environment Variable Handling:</strong> Avoid hardcoding sensitive information. Utilize dedicated secret management services for production (e.g., AWS Secrets Manager, HashiCorp Vault).</li>
+                <li><strong>Threat Modeling and Code Reviews:</strong> Integrate threat modeling early in the SDLC and conduct regular secure code reviews.</li>
+                <li><strong>Error Handling:</strong> Do not expose detailed error messages or stack traces to end-users in production. Implement generic error responses for clients and detailed logging for internal monitoring.</li>
+            </ul>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('vulnerabilityPieChart').getContext('2d');
+        const vulnerabilityPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Critical', 'Medium', 'Low'],
+                datasets: [{
+                    label: 'Vulnerabilities',
+                    data: [0, 1, 1],
+                    backgroundColor: [
+                        '#de3730', // error-color for Critical
+                        '#003e69', // primary-dark for Medium
+                        '#303c4c'  // secondary-dark for Low
+                    ],
+                    borderColor: '#f8f9ff', // primary-light
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#3a3b3e' // neutral-dark
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Vulnerability Distribution',
+                        color: '#003e69', // primary-dark
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
