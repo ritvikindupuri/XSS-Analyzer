@@ -4,19 +4,24 @@
 
 This project involved designing and building an automated security workflow in Google's Opal to function as a sophisticated Static Application Security Testing (SAST) tool. This system addresses the time-consuming and manual nature of traditional code reviews by creating a multi-step, automated pipeline that leverages Generative AI.
 
-The workflow ingests raw code and processes it through distinct stages, culminating in a comprehensive, client-ready HTML security report. This tool demonstrates a practical application of chained AI prompting to create a powerful, automated system for identifying, analyzing, and reporting on application security flaws.
+The workflow ingests raw code and processes it through distinct stages, culminating in a comprehensive, client-ready HTML security report. This tool demonstrates a practical application of chained AI prompting to create a powerful, end-to-end system for identifying, reporting, and integrating security analysis.
 
-##  Core Technologies
+## Core Technologies
 
 * **Google's Opal:** The platform used to design and execute the multi-step AI workflow.
 * **Generative AI:** The core engine, with different "AI agents" assigned to specialized tasks (planning, research, analysis).
+* **GitHub Actions:** The CI/CD platform targeted for automated integration.
 * **HTML/CSS:** Used to dynamically generate the final, professional security report.
 
 ---
 
-##  Workflow Architecture
+## Part 1: The Core SAST Analysis Engine
 
-The entire process is orchestrated as a pipeline of chained AI agents. When a user submits code, it triggers a four-step sequence:
+This is the primary pipeline responsible for ingesting raw code and producing a comprehensive security analysis.
+
+### How It Works: The 4-Step AI Pipeline
+
+The entire process is orchestrated as a pipeline of chained AI agents. When a user submits code, it triggers this four-step sequence:
 
 1.  **Plan:** An AI agent first analyzes the provided code to formulate a deep research query. This query is designed to find vulnerabilities, insecure patterns, and best-practice mitigations relevant to the code's logic.
 2.  **Research:** A second agent uses this specialized query to perform in-depth research.
@@ -29,15 +34,13 @@ The entire process is orchestrated as a pipeline of chained AI agents. When a us
   <em>Figure 1: The multi-step GenAI workflow in Google's Opal</em>
 </p>
 
----
+### The Result: The Automated Security Report
 
-##  Project Output: The Automated Security Report
+The final "Report" step generates a professional HTML document that clearly communicates the security posture of the analyzed code to both developers and leadership.
 
-The final product is a professional HTML report that clearly communicates the security posture of the analyzed code. The report is designed to be understood by both developers and leadership.
-
-### 1. High-Level Vulnerability Summary
-
-The report opens with a "Vulnerability Summary" dashboard. This provides an immediate, high-level overview of the findings, including a count of critical, medium, and low-severity vulnerabilities. A pie chart offers instant data visualization for quick assessment.
+* **High-Level Summary:** The report opens with a dashboard providing an immediate overview of findings by severity, complete with a data visualization pie chart.
+* **Deep Analysis:** For each vulnerability, the report provides a detailed breakdown of the flaw, its exploitation, and its business impact.
+* **Actionable Mitigation:** Most importantly, the report provides a specific, code-level recommendation showing *exactly* how to fix the flaw.
 
 <p align="center">
   <img src=".assets/Vulnerability%20Summary.png" alt="Vulnerability Summary Dashboard">
@@ -45,23 +48,11 @@ The report opens with a "Vulnerability Summary" dashboard. This provides an imme
   <em>Figure 2: The dynamically generated summary and distribution chart</em>
 </p>
 
-### 2. Deep Analysis & Impact
-
-For each identified vulnerability, the report provides a detailed breakdown. As shown in the analysis of a Reflected XSS flaw, this includes:
-
-* **Vulnerability Description:** A clear explanation of *what* the flaw is.
-* **Exploitation:** A concrete example of *how* an attacker could exploit it.
-* **Impact:** The business and security impact, such as session hijacking or cookie theft.
-
 <p align="center">
   <img src=".assets/XSS%20Analysis.png" alt="XSS Analysis Section">
   <br>
   <em>Figure 3: In-depth analysis of an identified Reflected XSS vulnerability</em>
 </p>
-
-### 3. Actionable Code-Level Mitigation
-
-The most critical part of the report is the "Recommendations" section. Instead of just stating a problem, the AI provides a specific, actionable solution. This includes a clear **Recommendation 1: Implement Context-Aware Output Encoding** and a concrete code example showing *exactly* how to fix the flaw using a vetted library like `escape-html`.
 
 <p align="center">
   <img src=".assets/Actionable%20Insight.png" alt="Actionable Insight and Code Fix">
@@ -71,8 +62,34 @@ The most critical part of the report is the "Recommendations" section. Instead o
 
 ---
 
+## Part 2: The Automated CI/CD Integration Engine
+
+A security tool is only effective if it's seamlessly integrated into the development lifecycle. To solve this, a second module was built: an AI-powered "CI/CD Integration Helper."
+
+### How It Works: The AI Workflow Generator
+
+This feature uses a dedicated AI agent whose sole task is to generate the configuration code needed to run the SAST scanner. The agent is prompted with the specific requirements of a CI/CD pipeline, such as running on a pull request and failing the build if "Critical" vulnerabilities are found.
+
+<p align="center">
+  <img src=".assets/GitHub%20actions%20agent.png" alt="AI Agent for generating GitHub Actions workflow">
+  <br>
+  <em>Figure 5: The AI agent prompt for generating the CI/CD workflow</em>
+</p>
+
+### The Result: A Production-Ready GitHub Actions File
+
+The output is a complete, production-ready GitHub Actions YAML file. This allows any developer to copy, paste, and integrate the SAST scanner directly into their pull request process in minutes, not hours, ensuring security is checked automatically on every code change.
+
+<p align="center">
+  <img src=".assets/GitHub%20actions.png" alt="Example of the generated GitHub Actions YAML file">
+  <br>
+  <em>Figure 6: The resulting GitHub Actions YAML file for automated security analysis</em>
+</p>
+
+---
+
 ## Conclusion & Impact
 
-This project successfully demonstrates the power of GenAI to automate and scale complex security tasks. By chaining multiple specialized AI agents, this workflow transforms a manual, time-intensive code review into a fast, repeatable, and automated process.
+This project demonstrates a practical application of chained AI prompting to create a powerful, end-to-end system for identifying, reporting, and integrating security analysis.
 
-The system not only identifies flaws but, more importantly, **produces a high-quality, actionable report** that bridges the gap between security analysis and developer remediation. This tool serves as a powerful proof-of-concept for an intelligent, next-generation SAST solution.
+By automating the full cycle—from initial code analysis to generating a human-readable report *and* providing the CI/CD integration code—this tool solves a major bottleneck. It scales a high-skill security review and makes it accessible to any developer, embedding security directly into the development lifecycle.
